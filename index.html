@@ -12,6 +12,12 @@
       text-align: center;
       overflow: hidden;
     }
+
+    h1, h2, .detalles, .footer, .imagen, #contador {
+      position: relative;
+      z-index: 3; /* encima del degradado */
+    }
+
     h1 {
       color: #ff2e2e;
       font-size: 3em;
@@ -29,11 +35,6 @@
       color: #ff4444;
       margin: 20px 0;
       animation: slideUp 2s ease-in-out;
-      31   h1, h2, .detalles, .footer, .imagen, #contador {
-32     position: relative;
-33     z-index: 3; /* encima del degradado */
-34   }
-
     }
     .footer {
       margin-top: 40px;
@@ -47,14 +48,35 @@
       border: 3px solid #ff2e2e;
       border-radius: 10px;
       animation: zoomIn 2s ease-in-out;
-      position: relative;
-      z-index: 2;
     }
     #contador {
       font-size: 2em;
       color: #ffffff;
       margin-top: 20px;
       animation: glow 2s infinite alternate;
+    }
+
+    /* Video de fondo */
+    #video-fondo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      filter: blur(5px) brightness(0.7);
+    }
+
+    /* Degradado morado-rosa encima del video */
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(rgba(179,102,255,0.5), rgba(255,102,204,0.7));
+      z-index: 2;
     }
 
     /* Animaciones */
@@ -67,29 +89,6 @@
       to { text-shadow: 0 0 20px #ff2e2e; }
     }
     @keyframes slideUp {
-      65   /* Video de fondo */
-66   #video-fondo {
-67     position: fixed;
-68     top: 0;
-69     left: 0;
-70     width: 100%;
-71     height: 100%;
-72     object-fit: cover;
-73     z-index: 0;
-74     filter: blur(5px) brightness(0.7);
-75   }
-
-76   /* Degradado oscuro encima del video */
-77   #overlay {
-78     position: fixed;
-79     top: 0;
-80     left: 0;
-81     width: 100%;
-82     height: 100%;
-83     background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7));
-84     z-index: 2;
-85   }
-
       from { transform: translateY(50px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
@@ -108,19 +107,44 @@
       z-index: 1;
       pointer-events: none;
     }
+
+    /* Botón de música */
+    .btn-musica {
+      background:#b366ff;
+      color:white;
+      border:none;
+      padding:10px 20px;
+      border-radius:5px;
+      cursor:pointer;
+      font-size: 1em;
+      margin-top: 10px;
+      z-index: 3;
+      position: relative;
+    }
   </style>
 </head>
 <body>
+  <!-- Video de fondo -->
+  <video autoplay loop muted playsinline id="video-fondo">
+    <source src="arirang.mp4" type="video/mp4">
+  </video>
+
+  <!-- Degradado morado-rosa -->
+  <div id="overlay"></div>
+
   <canvas id="particles"></canvas>
 
   <!-- Música de fondo -->
-  <audio autoplay loop>
-    <source src="TU_MUSICA.mp3" type="audio/mpeg">
+  <audio id="musica" autoplay loop>
+    <source src="arirang.mp3" type="audio/mpeg">
     Tu navegador no soporta audio.
   </audio>
 
   <h1>Arirang</h1>
   <h2>¡Estás Invitado a mi Cumpleaños!</h2>
+
+  <!-- Botón para reproducir música manualmente -->
+  <button class="btn-musica" onclick="document.getElementById('musica').play()">▶ Reproducir música</button>
 
   <!-- Imagen del grupo -->
   <img class="imagen" src="TU_IMAGEN.jpg" alt="BTS Invitación">
@@ -128,7 +152,7 @@
   <!-- Detalles -->
   <div class="detalles">
     <p>📅 31 de Agosto | 🕒 3 PM</p>
-    <p>Lugar: ______________________</p>
+    <p>Lugar: Soul Party</p>
   </div>
 
   <!-- Contador regresivo -->
@@ -152,14 +176,6 @@
 
     class Particle {
       constructor() {
-        126   <!-- Video de fondo -->
-     <video autoplay loop muted playsinline id="video-fondo">
-     <source src="arirang.mp4" type="video/mp4">
-     </video>
-
-      <!-- Degradado oscuro encima del video-->
-        <div id="overlay"></div>
-
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
         this.size = Math.random() * 3 + 1;
