@@ -6,7 +6,53 @@
   <style>
     body {
       margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      text-align: center;
       overflow: hidden;
+    }
+
+    h1, h2, .detalles, .footer, .imagen, #contador {
+      position: relative;
+      z-index: 2; /* encima del video */
+    }
+
+    h1 {
+      color: #ff0000; /* rojo */
+      font-size: 3em;
+      margin: 20px 0;
+      animation: fadeIn 3s ease-in-out;
+    }
+    h2 {
+      color: #000000; /* negro */
+      font-size: 2em;
+      margin: 10px 0;
+      animation: glow 2s infinite alternate;
+    }
+    .detalles {
+      font-size: 1.5em;
+      color: #ff0000; /* rojo */
+      margin: 20px 0;
+      animation: slideUp 2s ease-in-out;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 1.2em;
+      color: #000000; /* negro */
+      animation: fadeIn 4s ease-in-out;
+    }
+    .imagen {
+      margin: 20px auto;
+      max-width: 80%;
+      border: 3px solid #ff0000; /* rojo */
+      border-radius: 10px;
+      animation: zoomIn 2s ease-in-out;
+    }
+    #contador {
+      font-size: 2em;
+      color: #000000; /* negro */
+      margin-top: 20px;
+      animation: glow 2s infinite alternate;
     }
 
     /* Video de fondo */
@@ -17,7 +63,36 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      z-index: -1; /* detrás de todo */
+      z-index: 0;
+    }
+
+    /* Animaciones */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 5px #000000; }
+      to { text-shadow: 0 0 20px #ff0000; }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes zoomIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Partículas */
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -27,5 +102,102 @@
     <source src="body to body.mp4" type="video/mp4">
     Tu navegador no soporta video.
   </video>
+
+  <canvas id="particles"></canvas>
+
+  <h1>Arirang</h1>
+  <h2>¡Estás Invitado a mi Cumpleaños!</h2>
+
+  <!-- Imagen del grupo -->
+  <img class="imagen" src="TU_IMAGEN.jpg" alt="BTS Invitación">
+
+  <!-- Detalles -->
+  <div class="detalles">
+    <p>📅 31 de Agosto | 🕒 3 PM</p>
+    <p>Lugar: Soul Party</p>
+  </div>
+
+  <!-- Contador regresivo -->
+  <div id="contador"></div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>¡No faltes, ARMY!</p>
+    <p>Celebremos juntos con el espíritu de Arirang</p>
+  </div>
+
+  <script>
+    // Script para partículas animadas
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particlesArray = [];
+    const colors = ['#ff0000', '#000000']; // rojo y negro
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * 2 - 1;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.size > 0.2) this.size -= 0.02;
+      }
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      particlesArray = [];
+      for (let i = 0; i < 100; i++) {
+        particlesArray.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+        particlesArray[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+
+    // Script para contador regresivo
+    function actualizarContador() {
+      const evento = new Date("August 31, 2026 15:00:00").getTime();
+      const ahora = new Date().getTime();
+      const diferencia = evento - ahora;
+
+      const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+      const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+      document.getElementById("contador").innerHTML =
+        `⏳ Faltan ${dias}d ${horas}h ${minutos}m ${segundos}s`;
+
+      if (diferencia < 0) {
+        document.getElementById("contador").innerHTML = "🎉 ¡El evento ha comenzado!";
+      }
+    }
+
+    setInterval(actualizarContador, 1000);
+  </script>
 </body>
 </html>
+
